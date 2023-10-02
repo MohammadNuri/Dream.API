@@ -20,16 +20,26 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
     app.Run(async (context) =>
     {
-        await context.Response.WriteAsync("Hi :)");
+        await context.Response.WriteAsync("Error!!!");
     });
+}
+
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseAuthorization();
 
-app.MapControllers(); //  Domain.com/Controller/Action
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 #endregion
 
