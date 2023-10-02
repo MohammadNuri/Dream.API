@@ -16,7 +16,7 @@ namespace Dream.API.Controllers
 
             if (city == null)
             {
-                return NotFound();
+                return NotFound(); 
             }
 
             return Ok(city.PointOfInterest);
@@ -36,7 +36,7 @@ namespace Dream.API.Controllers
                 return NotFound();  
             }
 
-            return Ok(point);   
+            return Ok(point);
         }
     }
 }
