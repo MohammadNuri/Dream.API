@@ -11,5 +11,11 @@ namespace Dream.API.Controllers
         {
             return new JsonResult(CitiesDataStore.Current.Cities);
         }
+
+        [HttpGet("{id}")]
+        public JsonResult GetCity(int id)
+        {
+            return new JsonResult(CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id));
+        }
     }
 }
