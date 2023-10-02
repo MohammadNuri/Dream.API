@@ -4,21 +4,22 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Dream.API.Controllers
 {
+    [Route("api/Cities")]
     [ApiController]
-    [Route("api/Cities")]    
     public class CitiesController : ControllerBase
     {
         [HttpGet]
         public ActionResult<IEnumerable<CityDto>> GetCities()
         {
-            return Ok(CitiesDataStore.Current.Cities);
+            return Ok(CitiesDataStore.CurrentCities.Cities);
         }
 
+
         [HttpGet("{id}")]
-        public ActionResult<CityDto> GetCity(int id)
+        public ActionResult<CityDto> GetCities(int id)
         {
 
-            var cityToReturn = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id);
+            var cityToReturn = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == id);
             if (cityToReturn == null)
             {
                 return NotFound();
