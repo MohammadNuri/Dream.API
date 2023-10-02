@@ -19,8 +19,24 @@ namespace Dream.API.Controllers
                 return NotFound();
             }
 
-            return Ok(city.PointOfInterest);   
+            return Ok(city.PointOfInterest);
+        }
 
+        [HttpGet("{pointOfInterestId}")]   
+        public ActionResult<PointOfInterestDto> GetPointsOfInterest(int id , int pointOfInterestId)
+        {
+            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == id);
+            if (city == null)
+            {
+                return NotFound();  
+            }
+            var point = city.PointOfInterest.FirstOrDefault(p => p.Id == pointOfInterestId);
+            if (point == null)
+            {
+                return NotFound();  
+            }
+
+            return Ok(point);   
         }
     }
 }
