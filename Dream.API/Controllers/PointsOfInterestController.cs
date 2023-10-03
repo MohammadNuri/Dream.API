@@ -3,16 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dream.API.Controllers
 {
-    [Route("api/Cities/{id}/PointsOfInterest")]
+
+    [Produces("application/json")]  
+    [Route("api/Cities/{cityId}/PointsOfInterest")]
     [ApiController]
   
     public class PointsOfInterestController : ControllerBase
     {
         [HttpGet]   
-        public ActionResult<PointOfInterestDto> GetPointsOfInterest(int id)
+        public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId)
         {
 
-            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == id);
+            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
 
             if (city == null)
             {
@@ -22,10 +24,10 @@ namespace Dream.API.Controllers
             return Ok(city.PointOfInterest);
         }
 
-        [HttpGet("{pointOfInterestId}")]   
-        public ActionResult<PointOfInterestDto> GetPointsOfInterest(int id , int pointOfInterestId)
+        [HttpGet("{pointOfInterestId}" , Name = "GetPointsOfInterest")]   
+        public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId , int pointOfInterestId)
         {
-            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == id);
+            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)
             {
                 return NotFound();  
@@ -37,6 +39,39 @@ namespace Dream.API.Controllers
             }
 
             return Ok(point);
+        }
+
+        [HttpPost]
+        public ActionResult<PointOfInterestDto> CreatePointOfInterest(int cityId,[FromBody]PointOfInterestForCreationDto pointOfInterest)
+        {
+
+            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null)   
+            {
+                return NotFound();
+            }
+
+            var maxPointOfInterestId =
+                CitiesDataStore.CurrentCities.Cities.SelectMany(c => c.PointOfInterest).Max(p => p.Id);
+
+            var createPoint = new PointOfInterestDto()
+            {
+                Id = ++maxPointOfInterestId,
+                Name = pointOfInterest.Name,
+                Description = pointOfInterest.Description
+            };
+
+            city.PointOfInterest.Add(createPoint);
+
+
+            return CreatedAtAction("GetPointsOfInterest", 
+                new 
+            {
+                cityId = cityId,
+                pointOfInterestId = createPoint.Id
+            },
+            createPoint
+            );
         }
     }
 }

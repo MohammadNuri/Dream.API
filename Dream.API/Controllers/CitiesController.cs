@@ -1,9 +1,9 @@
 ﻿using Dream.API.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Dream.API.Controllers
 {
+    [Produces("application/json")]
     [Route("api/Cities")]
     [ApiController]
     public class CitiesController : ControllerBase

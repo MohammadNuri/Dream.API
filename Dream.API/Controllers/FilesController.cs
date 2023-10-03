@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace Dream.API.Controllers
@@ -8,7 +7,7 @@ namespace Dream.API.Controllers
     [ApiController]
     public class FilesController : ControllerBase
     {
-        FileExtensionContentTypeProvider _fileExtensionContentTypeProvider;
+        readonly FileExtensionContentTypeProvider _fileExtensionContentTypeProvider;
         public FilesController(FileExtensionContentTypeProvider fileExtensionContentTypeProvider)
         {
             _fileExtensionContentTypeProvider = fileExtensionContentTypeProvider;
