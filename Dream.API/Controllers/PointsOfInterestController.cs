@@ -1,10 +1,8 @@
 ﻿using Dream.API.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-
 namespace Dream.API.Controllers
 {
-
     [Produces("application/json")]  
     [Route("api/Cities/{cityId}/PointsOfInterest")]
     [ApiController]
@@ -44,7 +42,6 @@ namespace Dream.API.Controllers
         }
         #endregion
         //----------------------------------------------------------------
-
 
         //Create 
         #region Create
@@ -88,7 +85,6 @@ namespace Dream.API.Controllers
         #endregion
         //----------------------------------------------------------------
 
-
         //This is for Update Data in HTTP Put (Have to Change All Properties) 
         #region Update (HttpPut)
         [HttpPut("{pointOfInterestId}")]
@@ -114,28 +110,24 @@ namespace Dream.API.Controllers
 
         //----------------------------------------------------------------
         //This is for Edit Data in HTTP Patch (No Need to Change All Properties, it Keeps the Same Data When u Enter Null)
-        //Requirement Install:
-        //Microsoft.AspNetCore.JsonPatch
-        //Microsoft.AspNetCore.Mvc.NewtonsoftJso
+        //Requirement: 
+        //Microsoft.AspNetCore.JsonPatch + Microsoft.AspNetCore.Mvc.NewtonsoftJso
         //Get the Response from Body Like :
-        // [
-        //   {
         //      "path": "/name",
         //      "op": "replace",
         //      "value": "TestForPatch2"
-        //   }
-        // ]
         //this will replace the Name Property with the entered value 
+
         #region Edit (HttpPatch)
-        [HttpPatch("{pontiOfInterestid}")]
-        public ActionResult EditPointsOfInterest(int cityId, int pontiOfInterestid, JsonPatchDocument<PointOfInterestForUpdateDto> patchPointOfInterest)
+        [HttpPatch("{pointOfInterestid}")]
+        public ActionResult EditPointsOfInterest(int cityId, int pointOfInterestid, JsonPatchDocument<PointOfInterestForUpdateDto> patchPointOfInterest)
         {
             // Find a City with cityId 
             var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)
                 return NotFound();
             // Find a Point of Interest with pointOfInterestId
-            var point = city.PointOfInterest.FirstOrDefault(p => p.Id == pontiOfInterestid);
+            var point = city.PointOfInterest.FirstOrDefault(p => p.Id == pointOfInterestid);
             if (point == null)
                 return NotFound();
 
@@ -166,6 +158,25 @@ namespace Dream.API.Controllers
         #endregion
         //-----------------------------------------------------------------
 
+        //Delete
+        #region Delete
+        [HttpDelete("{pointOfInterestId}")]
+        public ActionResult DeletePointOfInterest(int cityId, int pointOfInterestId)
+        {
+            // Find a City with cityId 
+            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null)
+                return NotFound();
+            // Find a Point of Interest with pointOfInterestId
+            var point = city.PointOfInterest.FirstOrDefault(p => p.Id == pointOfInterestId);
+            if (point == null)
+                return NotFound();
 
+            city.PointOfInterest.Remove(point);
+
+            return NoContent();
+        }
+        #endregion
+        //-----------------------------------------------------------------
     }
 }
