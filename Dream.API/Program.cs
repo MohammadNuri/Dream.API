@@ -47,13 +47,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-else
-{
-    app.Run(async (context) =>
-    {
-        await context.Response.WriteAsync("Error!!!");
-    });
-}
 
 
 app.UseHttpsRedirection();
