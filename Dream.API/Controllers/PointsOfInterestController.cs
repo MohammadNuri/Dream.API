@@ -15,15 +15,15 @@ namespace Dream.API.Controllers
         //Mail Service (LocalMailService ctor Injection)
         #region Injections
         private readonly ILogger<PointsOfInterestController> _logger;
-        private readonly ILocalMailService _localMailService;
+        private readonly IMailService _mailService;
 
         public PointsOfInterestController(
             ILogger<PointsOfInterestController> logger,
-            ILocalMailService localMailService)
+            IMailService mailService)
 
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _localMailService = localMailService ?? throw new ArgumentNullException();
+            _mailService = mailService ?? throw new ArgumentNullException();
         }
         #endregion
 
@@ -201,7 +201,7 @@ namespace Dream.API.Controllers
             city.PointOfInterest.Remove(point);
 
             //Mail Notice Service For Deleted PointOfInterest
-            _localMailService.Send(
+            _mailService.Send(
                 "Point Of Interest Deleted",
                 $"Point of Interest {point.Name} with city {city.Name} with id {pointOfInterestId} has been Deleted"
                 );

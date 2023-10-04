@@ -1,6 +1,6 @@
 ﻿namespace Dream.API.Services
 {
-    public interface ILocalMailService
+    public interface IMailService
     {
         public void Send(string subject, string message);
     }

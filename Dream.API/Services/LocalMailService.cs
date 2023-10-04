@@ -3,7 +3,7 @@ using System.Net.Mail;
 
 namespace Dream.API.Services
 {
-    public class LocalMailService : ILocalMailService
+    public class LocalMailService : IMailService
     {
         private string _mailTo = "DarvyXe@gmail.com";
         private string _mailFrom = "log@DarvyXe.com";
