@@ -19,21 +19,28 @@ namespace Dream.API.Controllers
         }
 
 
-        //Get All & Get With Id
+        //Get All & Get With Id + log information
         #region Get
         [HttpGet]
         public ActionResult<IEnumerable<PointOfInterestDto>> GetPointsOfInterest(int cityId)
         {
 
             var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
-
-            if (city == null)
+            try
             {
-                _logger.LogInformation($"City with id {cityId} does not found!");
-                return NotFound();
+                if (city == null)
+                {
+                    _logger.LogInformation($"City with id {cityId} does not found!");
+                    return NotFound();
+                }
+                return Ok(city.PointOfInterest);
             }
-
-            return Ok(city.PointOfInterest);
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Internal Server Error for City with {cityId}", ex);
+                return StatusCode(500,"Internal Server Error");
+            }
+           
         }
         [HttpGet("{pointOfInterestId}", Name = "GetPointsOfInterest")]
         public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId, int pointOfInterestId)
