@@ -1,12 +1,19 @@
-﻿using System.Net;
+﻿ using System.Net;
 using System.Net.Mail;
 
 namespace Dream.API.Services
 {
     public class LocalMailService : IMailService
     {
-        private string _mailTo = "DarvyXe@gmail.com";
-        private string _mailFrom = "log@DarvyXe.com";
+
+        private readonly string _mailTo;
+        private readonly string _mailFrom;
+
+        public LocalMailService(IConfiguration configuration)
+        {
+            _mailTo = configuration["mailSetting:mailToAddress"] ?? string.Empty;
+            _mailFrom = configuration["mailSetting:mailFromAddress"] ?? string.Empty;
+        }
 
         public void Send(string subject, string message)
         {
