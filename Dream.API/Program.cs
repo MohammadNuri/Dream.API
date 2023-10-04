@@ -1,6 +1,8 @@
 using Dream.API;
+using Dream.API.DbContext;
 using Dream.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Core;
 
@@ -18,7 +20,7 @@ builder.Host.UseSerilog();
 //--MVC Controller
 builder.Services.AddControllers(options =>
 {
-    options.ReturnHttpNotAcceptable = true; 
+    options.ReturnHttpNotAcceptable = true;
 })
     .AddNewtonsoftJson()
     .AddXmlDataContractSerializerFormatters();
@@ -33,6 +35,10 @@ builder.Services.AddScoped<IMailService, LocalMailService>();
 builder.Services.AddScoped<IMailService, ReleaseMailService>();
 #endif
 builder.Services.AddSingleton<CitiesDataStore>();
+builder.Services.AddDbContext<DreamApiDbContext>(option =>
+{
+    option.UseSqlite("Data Source = DreamApi.db");
+});
 
 
 

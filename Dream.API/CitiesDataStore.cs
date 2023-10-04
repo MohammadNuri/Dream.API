@@ -15,7 +15,7 @@ namespace Dream.API
                {
                    new PointOfInterestDto()
                    {
-                       Id = 1,  
+                       Id = 1,
                        Name = "Jaye Didani 1",
                        Description = "This is Jaye Didani 1"
                    }, new PointOfInterestDto()
