@@ -1,4 +1,5 @@
 ﻿using Dream.API.Models;
+using Dream.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 namespace Dream.API.Controllers
@@ -9,14 +10,22 @@ namespace Dream.API.Controllers
   
     public class PointsOfInterestController : ControllerBase 
     {
-        //Setup Logging System (ILogger Injection and ctor)
-        private readonly ILogger<PointsOfInterestController> _logger;
-        
-        public PointsOfInterestController(ILogger<PointsOfInterestController> logger)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));   
-        }
 
+        //Logging System (ILogger ctor Injection)
+        //Mail Service (LocalMailService ctor Injection)
+        #region Injections
+        private readonly ILogger<PointsOfInterestController> _logger;
+        private readonly LocalMailService _localMailService;
+
+        public PointsOfInterestController(
+            ILogger<PointsOfInterestController> logger,
+            LocalMailService localMailService)
+
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _localMailService = localMailService ?? throw new ArgumentNullException();
+        }
+        #endregion
 
         //Get All & Get With Id + log information
         #region Get
@@ -190,6 +199,11 @@ namespace Dream.API.Controllers
                 return NotFound();
 
             city.PointOfInterest.Remove(point);
+
+            _localMailService.Send(
+                "Point Of Interest Deleted",
+                $"Point of Interest {point.Name} with city {city.Name} with id {pointOfInterestId} has been Deleted"
+                );
 
             return NoContent();
         }

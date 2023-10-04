@@ -1,3 +1,4 @@
+using Dream.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
 using Serilog;
 using Serilog.Core;
@@ -25,6 +26,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 //--Custom Services
+builder.Services.AddScoped<LocalMailService>();
+
 
 
 //---------------------------------------------------
