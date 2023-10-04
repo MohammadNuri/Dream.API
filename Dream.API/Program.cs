@@ -26,7 +26,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 //--Custom Services
-builder.Services.AddScoped<LocalMailService>();
+builder.Services.AddScoped<ILocalMailService, LocalMailService>();
 
 
 
