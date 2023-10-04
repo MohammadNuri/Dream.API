@@ -9,7 +9,6 @@ namespace Dream.API.Controllers
   
     public class PointsOfInterestController : ControllerBase 
     {
-
         //Setup Logging System (ILogger Injection and ctor)
         private readonly ILogger<PointsOfInterestController> _logger;
         
