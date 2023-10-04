@@ -7,18 +7,29 @@ namespace Dream.API.Controllers
     [Route("api/Cities/{cityId}/PointsOfInterest")]
     [ApiController]
   
-    public class PointsOfInterestController : ControllerBase
+    public class PointsOfInterestController : ControllerBase 
     {
-        //Get All & Get With Id 
+
+        //Setup Logging System (ILogger Injection and ctor)
+        private readonly ILogger<PointsOfInterestController> _logger;
+        
+        public PointsOfInterestController(ILogger<PointsOfInterestController> logger)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));   
+        }
+
+
+        //Get All & Get With Id
         #region Get
         [HttpGet]
-        public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId)
+        public ActionResult<IEnumerable<PointOfInterestDto>> GetPointsOfInterest(int cityId)
         {
 
             var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
 
             if (city == null)
             {
+                _logger.LogInformation($"City with id {cityId} does not found!");
                 return NotFound();
             }
 
@@ -43,7 +54,7 @@ namespace Dream.API.Controllers
         #endregion
         //----------------------------------------------------------------
 
-        //Create 
+        //Create
         #region Create
         [HttpPost]
         public ActionResult<PointOfInterestDto> CreatePointOfInterest(int cityId,[FromBody]PointOfInterestForCreationDto pointOfInterest)
@@ -85,7 +96,7 @@ namespace Dream.API.Controllers
         #endregion
         //----------------------------------------------------------------
 
-        //This is for Update Data in HTTP Put (Have to Change All Properties) 
+        //This is for Update Data in HTTP Put (Have to Change All Properties)
         #region Update (HttpPut)
         [HttpPut("{pointOfInterestId}")]
 
@@ -110,13 +121,13 @@ namespace Dream.API.Controllers
 
         //----------------------------------------------------------------
         //This is for Edit Data in HTTP Patch (No Need to Change All Properties, it Keeps the Same Data When u Enter Null)
-        //Requirement: 
+        //Requirement:
         //Microsoft.AspNetCore.JsonPatch + Microsoft.AspNetCore.Mvc.NewtonsoftJso
         //Get the Response from Body Like :
         //      "path": "/name",
         //      "op": "replace",
         //      "value": "TestForPatch2"
-        //this will replace the Name Property with the entered value 
+        //this will replace the Name Property with the entered value
 
         #region Edit (HttpPatch)
         [HttpPatch("{pointOfInterestid}")]
