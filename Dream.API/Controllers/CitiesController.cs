@@ -8,10 +8,17 @@ namespace Dream.API.Controllers
     [ApiController]
     public class CitiesController : ControllerBase
     {
+        private readonly CitiesDataStore _citiesDataStore;
+
+        public CitiesController(CitiesDataStore citiesDataStore)
+        {
+            _citiesDataStore = citiesDataStore;
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<CityDto>> GetCities()
         {
-            return Ok(CitiesDataStore.CurrentCities.Cities);
+            return Ok(_citiesDataStore.Cities);
         }
 
 
@@ -19,7 +26,7 @@ namespace Dream.API.Controllers
         public ActionResult<CityDto> GetCities(int id)
         {
 
-            var cityToReturn = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == id);
+            var cityToReturn = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == id);
             if (cityToReturn == null)
             {
                 return NotFound();

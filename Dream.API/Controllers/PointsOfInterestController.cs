@@ -16,14 +16,18 @@ namespace Dream.API.Controllers
         #region Injections
         private readonly ILogger<PointsOfInterestController> _logger;
         private readonly IMailService _mailService;
+        private readonly CitiesDataStore _citiesDataStore;
 
         public PointsOfInterestController(
             ILogger<PointsOfInterestController> logger,
-            IMailService mailService)
+            IMailService mailService,
+            CitiesDataStore citiesDataStore)
+            
 
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mailService = mailService ?? throw new ArgumentNullException();
+            _citiesDataStore = citiesDataStore;
         }
         #endregion
 
@@ -33,7 +37,7 @@ namespace Dream.API.Controllers
         public ActionResult<IEnumerable<PointOfInterestDto>> GetPointsOfInterest(int cityId)
         {
 
-            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
+            var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
             try
             {
                 if (city == null)
@@ -53,7 +57,7 @@ namespace Dream.API.Controllers
         [HttpGet("{pointOfInterestId}", Name = "GetPointsOfInterest")]
         public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId, int pointOfInterestId)
         {
-            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
+            var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)
             {
                 return NotFound();
@@ -80,14 +84,14 @@ namespace Dream.API.Controllers
                 return BadRequest();
             }
 
-            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
+            var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)   
             {
                 return NotFound();
             }
 
             var maxPointOfInterestId =
-                CitiesDataStore.CurrentCities.Cities.SelectMany(c => c.PointOfInterest).Max(p => p.Id);
+                _citiesDataStore.Cities.SelectMany(c => c.PointOfInterest).Max(p => p.Id);
 
             var createPoint = new PointOfInterestDto()
             {
@@ -118,7 +122,7 @@ namespace Dream.API.Controllers
         public ActionResult UpdatePointOfInterest(int cityId, int pointOfInterestId, PointOfInterestForUpdateDto pointOfInterest)
         {
             // Find a City with cityId 
-            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
+            var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)
                 return NotFound();
             // Find a Point of Interest with pointOfInterestId
@@ -138,18 +142,13 @@ namespace Dream.API.Controllers
         //This is for Edit Data in HTTP Patch (No Need to Change All Properties, it Keeps the Same Data When u Enter Null)
         //Requirement:
         //Microsoft.AspNetCore.JsonPatch + Microsoft.AspNetCore.Mvc.NewtonsoftJso
-        //Get the Response from Body Like :
-        //      "path": "/name",
-        //      "op": "replace",
-        //      "value": "TestForPatch2"
-        //this will replace the Name Property with the entered value
 
         #region Edit (HttpPatch)
         [HttpPatch("{pointOfInterestid}")]
         public ActionResult EditPointsOfInterest(int cityId, int pointOfInterestid, JsonPatchDocument<PointOfInterestForUpdateDto> patchPointOfInterest)
         {
             // Find a City with cityId 
-            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
+            var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)
                 return NotFound();
             // Find a Point of Interest with pointOfInterestId
@@ -190,7 +189,7 @@ namespace Dream.API.Controllers
         public ActionResult DeletePointOfInterest(int cityId, int pointOfInterestId)
         {
             // Find a City with cityId 
-            var city = CitiesDataStore.CurrentCities.Cities.FirstOrDefault(c => c.Id == cityId);
+            var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)
                 return NotFound();
             // Find a Point of Interest with pointOfInterestId

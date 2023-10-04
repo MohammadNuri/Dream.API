@@ -1,3 +1,4 @@
+using Dream.API;
 using Dream.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
 using Serilog;
@@ -31,6 +32,7 @@ builder.Services.AddScoped<IMailService, LocalMailService>();
 #else
 builder.Services.AddScoped<IMailService, ReleaseMailService>();
 #endif
+builder.Services.AddSingleton<CitiesDataStore>();
 
 
 

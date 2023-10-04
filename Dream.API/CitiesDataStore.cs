@@ -5,7 +5,7 @@ namespace Dream.API
     public class CitiesDataStore
     {
         public List<CityDto> Cities { get; set; }
-        public static CitiesDataStore CurrentCities { get; } = new CitiesDataStore();
+        //public static CitiesDataStore CurrentCities { get; } = new CitiesDataStore();
         public CitiesDataStore()
         {
             Cities = new List<CityDto>()
