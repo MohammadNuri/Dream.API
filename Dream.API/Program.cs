@@ -1,6 +1,7 @@
 using Dream.API;
 using Dream.API.DbContext;
 using Dream.API.Services;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -37,7 +38,9 @@ builder.Services.AddScoped<IMailService, ReleaseMailService>();
 builder.Services.AddSingleton<CitiesDataStore>();
 builder.Services.AddDbContext<DreamApiDbContext>(option =>
 {
-    option.UseSqlite("Data Source = DreamApi.db");
+    option.UseSqlite(
+        builder.Configuration["ConnectionStrings:SqliteDreamApi"]
+        );
 });
 
 
@@ -62,12 +65,12 @@ app.UseRouting();
 app.UseAuthorization();
 
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+app.MapControllers();
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//});
 
 #endregion
-
 
 app.Run();
