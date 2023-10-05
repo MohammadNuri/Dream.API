@@ -54,6 +54,12 @@ namespace Dream.API.Repositories
         }
         #endregion
 
+        public async Task<bool> CityExistAsync(int cityId)
+        {
+            return await _context.Cities.AnyAsync(c => c.Id == cityId);
+        }
+       
+
 
 
     }

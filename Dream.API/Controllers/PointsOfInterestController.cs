@@ -1,4 +1,6 @@
-﻿using Dream.API.Models;
+﻿using AutoMapper;
+using Dream.API.Models;
+using Dream.API.Repositories;
 using Dream.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -16,39 +18,36 @@ namespace Dream.API.Controllers
         #region Injections
         private readonly ILogger<PointsOfInterestController> _logger;
         private readonly IMailService _mailService;
-
+        private readonly IDreamInfoRepository _dreamInfoRepository;
+        private readonly IMapper _mapper;   
         public PointsOfInterestController(
             ILogger<PointsOfInterestController> logger,
-            IMailService mailService)
+            IMailService mailService,
+            IDreamInfoRepository dreamInfoRepository,
+            IMapper mapper)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mailService = mailService ?? throw new ArgumentNullException();
+            _mapper = mapper ?? throw new ArgumentNullException();
+            _dreamInfoRepository = dreamInfoRepository ?? throw new ArgumentNullException();
         }
         #endregion
 
         //Get All & Get With Id + log information
         #region Get
-        //[HttpGet]
-        //public ActionResult<IEnumerable<PointOfInterestDto>> GetPointsOfInterest(int cityId)
-        //{
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId)
+        {
+            if (!await _dreamInfoRepository.CityExistAsync(cityId))
+            {
+                _logger.LogInformation($"{cityId} Not Found");
+                return NotFound();
+            }
 
-        //    var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-        //    try
-        //    {
-        //        if (city == null)
-        //        {
-        //            _logger.LogInformation($"City with id {cityId} does not found!");
-        //            return NotFound();
-        //        }
-        //        return Ok(city.PointOfInterest);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogCritical($"Internal Server Error for City with {cityId}", ex);
-        //        return StatusCode(500,"Internal Server Error");
-        //    }
-           
-        //}
+            var pointsOfInterest = await _dreamInfoRepository.GetPointsOfInterestAsync(cityId);
+
+            return Ok(_mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterest));
+        }
         //[HttpGet("{pointOfInterestId}", Name = "GetPointsOfInterest")]
         //public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId, int pointOfInterestId)
         //{
