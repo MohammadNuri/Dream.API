@@ -1,4 +1,5 @@
 ﻿using Dream.API.Models;
+using Dream.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dream.API.Controllers
@@ -8,17 +9,30 @@ namespace Dream.API.Controllers
     [ApiController]
     public class CitiesController : ControllerBase
     {
-        private readonly CitiesDataStore _citiesDataStore;
+        private readonly IDreamInfoRepository _infoRepository;  
 
-        public CitiesController(CitiesDataStore citiesDataStore)
+        public CitiesController(IDreamInfoRepository infoRepository)
         {
-            _citiesDataStore = citiesDataStore;
+            _infoRepository = infoRepository ?? throw new ArgumentNullException(nameof(infoRepository));   
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CityDto>> GetCities()
+        public async Task<ActionResult<IEnumerable<CityWithoutPointOfInterestDto>>> GetCities()
         {
-            return Ok(_citiesDataStore.Cities);
+            var cities = await _infoRepository.GetCitiesAsync();
+            var result = new List<CityWithoutPointOfInterestDto>();
+
+            foreach (var city in cities)
+            {
+                result.Add(new CityWithoutPointOfInterestDto()
+                {
+                    Id = city.Id,
+                    Name = city.Name,
+                    Description = city.Description,
+                });
+            }
+
+            return Ok(result);
         }
 
 
@@ -26,7 +40,7 @@ namespace Dream.API.Controllers
         public ActionResult<CityDto> GetCities(int id)
         {
 
-            var cityToReturn = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == id);
+            var cityToReturn = _infoRepository.GetCitiesAsync();
             if (cityToReturn == null)
             {
                 return NotFound();

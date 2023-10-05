@@ -33,7 +33,6 @@ builder.Services.AddScoped<IMailService, LocalMailService>();
 #else
 builder.Services.AddScoped<IMailService, ReleaseMailService>();
 #endif
-builder.Services.AddSingleton<CitiesDataStore>();
 builder.Services.AddDbContext<DreamApiDbContext>(option =>
 {
     option.UseSqlite(
