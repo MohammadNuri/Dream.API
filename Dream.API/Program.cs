@@ -26,8 +26,9 @@ builder.Services.AddControllers(options =>
 //--Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 //--Custom Services
+builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 #if DEBUG
 builder.Services.AddScoped<IMailService, LocalMailService>();
 #else

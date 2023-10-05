@@ -1,4 +1,5 @@
-﻿using Dream.API.Models;
+﻿using AutoMapper;
+using Dream.API.Models;
 using Dream.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,43 +11,42 @@ namespace Dream.API.Controllers
     public class CitiesController : ControllerBase
     {
         private readonly IDreamInfoRepository _infoRepository;  
+        private readonly IMapper _mapper;   
 
-        public CitiesController(IDreamInfoRepository infoRepository)
+        public CitiesController(IDreamInfoRepository infoRepository,
+            IMapper mapper)
         {
-            _infoRepository = infoRepository ?? throw new ArgumentNullException(nameof(infoRepository));   
+            _infoRepository = infoRepository ?? throw new ArgumentNullException(nameof(infoRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); 
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CityWithoutPointOfInterestDto>>> GetCities()
         {
             var cities = await _infoRepository.GetCitiesAsync();
-            var result = new List<CityWithoutPointOfInterestDto>();
 
-            foreach (var city in cities)
-            {
-                result.Add(new CityWithoutPointOfInterestDto()
-                {
-                    Id = city.Id,
-                    Name = city.Name,
-                    Description = city.Description,
-                });
-            }
-
-            return Ok(result);
+            return Ok(
+                _mapper.Map<IEnumerable<CityWithoutPointOfInterestDto>>(cities)
+                );
         }
 
 
         [HttpGet("{id}")]
-        public ActionResult<CityDto> GetCities(int id)
+        public async Task<IActionResult> GetCities(int id, bool includePointsOfInterest = false)
         {
 
-            var cityToReturn = _infoRepository.GetCitiesAsync();
-            if (cityToReturn == null)
+            var city = await _infoRepository.GetCityAsync(id , includePointsOfInterest);
+            if (city == null)
             {
                 return NotFound();
             }
-            
-            return Ok(cityToReturn);
+
+            if (includePointsOfInterest)
+            {
+                return Ok(_mapper.Map<CityDto>(city));
+            }
+
+            return Ok(_mapper.Map<CityWithoutPointOfInterestDto>(city));
 
             //return new JsonResult(CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id));
         }
