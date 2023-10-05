@@ -1,18 +1,16 @@
 using Dream.API;
 using Dream.API.DbContext;
+using Dream.API.Repositories;
 using Dream.API.Services;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Serilog.Core;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .WriteTo.Console()
     .WriteTo.File("logs/cityinfo.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
-    
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
@@ -42,12 +40,10 @@ builder.Services.AddDbContext<DreamApiDbContext>(option =>
         builder.Configuration["ConnectionStrings:SqliteDreamApi"]
         );
 });
-
-
+builder.Services.AddScoped<IDreamInfoRepository, DreamInfoRepository>();
 
 //---------------------------------------------------
 var app = builder.Build();
-
 
 #region PipeLine
 
@@ -57,20 +53,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseHttpsRedirection();
 
 app.UseRouting();
 
 app.UseAuthorization();
 
-
 app.MapControllers();
 //app.UseEndpoints(endpoints =>
 //{
 //    endpoints.MapControllers();
 //});
-
 #endregion
 
 app.Run();
