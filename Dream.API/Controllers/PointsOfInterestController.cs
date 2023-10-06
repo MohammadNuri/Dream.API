@@ -15,6 +15,7 @@ namespace Dream.API.Controllers
 
         //Logging System (ILogger ctor Injection)
         //Mail Service (LocalMailService ctor Injection)
+        //DreamInfoRepository Injection
         #region Injections
         private readonly ILogger<PointsOfInterestController> _logger;
         private readonly IMailService _mailService;
@@ -70,43 +71,28 @@ namespace Dream.API.Controllers
 
         //Create
         #region Create
-        //[HttpPost]
-        //public ActionResult<PointOfInterestDto> CreatePointOfInterest(int cityId,[FromBody]PointOfInterestForCreationDto pointOfInterest)
-        //{
+        [HttpPost]
+        public async Task<ActionResult<PointOfInterestDto>> CreatePointOfInterest(int cityId, [FromBody] PointOfInterestForCreationDto pointOfInterest)
+        {
+            if (!await _dreamInfoRepository.CityExistAsync(cityId))
+            {
+                return NotFound();
+            }
 
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest();
-        //    }
+            var result = _mapper.Map<Entities.PointOfInterest>(pointOfInterest);
 
-        //    var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-        //    if (city == null)   
-        //    {
-        //        return NotFound();
-        //    }
+            await _dreamInfoRepository.CreatePointOfInterestAsync(cityId, result);
 
-        //    var maxPointOfInterestId =
-        //        _citiesDataStore.Cities.SelectMany(c => c.PointOfInterest).Max(p => p.Id);
+            await _dreamInfoRepository.SaveChangesAsync();
 
-        //    var createPoint = new PointOfInterestDto()
-        //    {
-        //        Id = ++maxPointOfInterestId,
-        //        Name = pointOfInterest.Name,
-        //        Description = pointOfInterest.Description
-        //    };
+            var createdpoint = _mapper.Map<Models.PointOfInterestDto>(result);
 
-        //    city.PointOfInterest.Add(createPoint);
-
-
-        //    return CreatedAtAction("GetPointsOfInterest", 
-        //        new 
-        //        {
-        //            cityId = cityId,
-        //            pointOfInterestId = createPoint.Id
-        //        },
-        //        createPoint
-        //    );
-        //}
+            return CreatedAtRoute("GetPointsOfInterest",new
+            {
+                cityId = cityId,    
+                pointOfInterestId = createdpoint.Id,   
+            },createdpoint);
+        }
         #endregion
         //----------------------------------------------------------------
 

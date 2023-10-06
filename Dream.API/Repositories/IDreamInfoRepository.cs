@@ -11,5 +11,7 @@ namespace Dream.API.Repositories
         Task<bool> CityExistAsync(int cityId); 
         Task<IEnumerable<PointOfInterest>> GetPointsOfInterestAsync(int cityId);
         Task<PointOfInterest?> GetPointOfInterestAsync(int cityId, int pointOfInterestId);
+        Task CreatePointOfInterestAsync(int cityId, PointOfInterest pointOfInterestId);
+        Task<bool> SaveChangesAsync();
     }
 }
