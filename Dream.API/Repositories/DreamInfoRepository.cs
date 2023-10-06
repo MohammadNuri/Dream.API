@@ -73,5 +73,10 @@ namespace Dream.API.Repositories
         {
             return (await _context.SaveChangesAsync() > 0); 
         }
+
+        public Task UpdatePointOfInterestAsync(int cityId, int pointOfInterestId, PointOfInterest pointOfInterest)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

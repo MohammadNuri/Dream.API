@@ -98,24 +98,32 @@ namespace Dream.API.Controllers
 
         //This is for Update Data in HTTP Put (Have to Change All Properties)
         #region Update (HttpPut)
-        //[HttpPut("{pointOfInterestId}")]
+        [HttpPut("{pointOfInterestId}")]
 
-        //public ActionResult UpdatePointOfInterest(int cityId, int pointOfInterestId, PointOfInterestForUpdateDto pointOfInterest)
-        //{
-        //    // Find a City with cityId 
-        //    var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-        //    if (city == null)
-        //        return NotFound();
-        //    // Find a Point of Interest with pointOfInterestId
-        //    var point = city.PointOfInterest.FirstOrDefault(p => p.Id == pointOfInterestId);
-        //    if (point == null)
-        //        return NotFound();
+        public async Task<ActionResult> UpdatePointOfInterest(int cityId, int pointOfInterestId, PointOfInterestForUpdateDto pointOfInterest)
+        {
+            if (!await _dreamInfoRepository.CityExistAsync(cityId))
+            {
+                return NotFound();
+            }
 
-        //    point.Name = pointOfInterest.Name;
-        //    point.Description = pointOfInterest.Description;
+            var point = await _dreamInfoRepository.GetPointOfInterestAsync(cityId,pointOfInterestId);
+            if (point == null)
+            {
+                return NotFound();
+            }
 
-        //    return NoContent();
-        //}
+            _mapper.Map(pointOfInterest, point);
+
+            await _dreamInfoRepository.SaveChangesAsync();
+
+            return CreatedAtRoute("GetPointsOfInterest", new
+            {
+                cityId = cityId,
+                pointOfInterestId = point.Id,
+                city = point.City,  
+            }, point);
+        }
         #endregion
         //----------------------------------------------------------------
 
