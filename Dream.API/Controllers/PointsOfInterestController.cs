@@ -48,22 +48,23 @@ namespace Dream.API.Controllers
 
             return Ok(_mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterest));
         }
-        //[HttpGet("{pointOfInterestId}", Name = "GetPointsOfInterest")]
-        //public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId, int pointOfInterestId)
-        //{
-        //    var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-        //    if (city == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var point = city.PointOfInterest.FirstOrDefault(p => p.Id == pointOfInterestId);
-        //    if (point == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpGet("{pointOfInterestId}", Name = "GetPointsOfInterest")]
+        public async Task<ActionResult<PointOfInterestDto>> GetPointsOfInterest(int cityId, int pointOfInterestId)
+        {
+            if (!await _dreamInfoRepository.CityExistAsync(cityId))
+            {
+                return NotFound();
+            }
 
-        //    return Ok(point);
-        //}
+            var pointOfInterest = await _dreamInfoRepository.GetPointOfInterestAsync(cityId, pointOfInterestId);
+            if (pointOfInterest == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<PointOfInterestDto>(pointOfInterest));
+
+        }
         #endregion
         //----------------------------------------------------------------
 
