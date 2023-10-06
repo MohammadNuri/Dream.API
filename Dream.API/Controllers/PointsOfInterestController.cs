@@ -131,44 +131,42 @@ namespace Dream.API.Controllers
         //This is for Edit Data in HTTP Patch (No Need to Change All Properties, it Keeps the Same Data When u Enter Null)
         //Requirement:
         //Microsoft.AspNetCore.JsonPatch + Microsoft.AspNetCore.Mvc.NewtonsoftJso
-
         #region Edit (HttpPatch)
-        //[HttpPatch("{pointOfInterestid}")]
-        //public ActionResult EditPointsOfInterest(int cityId, int pointOfInterestid, JsonPatchDocument<PointOfInterestForUpdateDto> patchPointOfInterest)
-        //{
-        //    // Find a City with cityId 
-        //    var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-        //    if (city == null)
-        //        return NotFound();
-        //    // Find a Point of Interest with pointOfInterestId
-        //    var point = city.PointOfInterest.FirstOrDefault(p => p.Id == pointOfInterestid);
-        //    if (point == null)
-        //        return NotFound();
+        [HttpPatch("{pointOfInterestid}")]
+        public async Task<ActionResult> EditPointsOfInterest(int cityId, int pointOfInterestid, JsonPatchDocument<PointOfInterestForUpdateDto> patchPointOfInterest)
+        {
+            if (!await _dreamInfoRepository.CityExistAsync(cityId))
+            {
+                return NotFound();
+            }
 
-        //    var pointOfInterestToPatch = new PointOfInterestForUpdateDto()
-        //    {
-        //        Name = point.Name,
-        //        Description = point.Description,
-        //    };
+            var point = await _dreamInfoRepository.GetPointOfInterestAsync(cityId, pointOfInterestid);
 
-        //    patchPointOfInterest.ApplyTo(pointOfInterestToPatch, ModelState);
+            if (point == null)
+            {
+                return NotFound();
+            }
 
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest();
-        //    }
+            var pointToPatch = _mapper.Map<PointOfInterestForUpdateDto>(point);
 
-        //    if (!TryValidateModel(pointOfInterestToPatch))
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+            patchPointOfInterest.ApplyTo(pointToPatch, ModelState);
 
-        //    point.Name = pointOfInterestToPatch.Name;
-        //    point.Description = pointOfInterestToPatch.Description;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            if (!TryValidateModel(pointToPatch))
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    return NoContent();
-        //}
+            _mapper.Map(pointToPatch, point);
+
+            await _dreamInfoRepository.SaveChangesAsync();  
+
+            return NoContent();
+        }
         #endregion
         //-----------------------------------------------------------------
 
