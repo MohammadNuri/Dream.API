@@ -172,28 +172,30 @@ namespace Dream.API.Controllers
 
         //Delete
         #region Delete
-        //[HttpDelete("{pointOfInterestId}")]
-        //public ActionResult DeletePointOfInterest(int cityId, int pointOfInterestId)
-        //{
-        //    // Find a City with cityId 
-        //    var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == cityId);
-        //    if (city == null)
-        //        return NotFound();
-        //    // Find a Point of Interest with pointOfInterestId
-        //    var point = city.PointOfInterest.FirstOrDefault(p => p.Id == pointOfInterestId);
-        //    if (point == null)
-        //        return NotFound();
+        [HttpDelete("{pointOfInterestId}")]
+        public async Task<ActionResult> DeletePointOfInterest(int cityId, int pointOfInterestId)
+        {
+            if (!await _dreamInfoRepository.CityExistAsync(cityId))
+            {
+                return NotFound();
+            }
 
-        //    city.PointOfInterest.Remove(point);
+            var pointOfInterestEntity = await _dreamInfoRepository
+                .GetPointOfInterestAsync(cityId, pointOfInterestId);
+            if (pointOfInterestEntity == null)
+            {
+                return NotFound();
+            }
 
-        //    //Mail Notice Service For Deleted PointOfInterest
-        //    _mailService.Send(
-        //        "Point Of Interest Deleted",
-        //        $"Point of Interest {point.Name} with city {city.Name} with id {pointOfInterestId} has been Deleted"
-        //        );
+            _dreamInfoRepository.DeletePointOfInterest(pointOfInterestEntity);
+            await _dreamInfoRepository.SaveChangesAsync();
 
-        //    return NoContent();
-        //}
+            _mailService.Send(
+                "Point of interest deleted.",
+                $"Point of interest {pointOfInterestEntity.Name} with id {pointOfInterestEntity.Id} was deleted.");
+
+            return NoContent();
+        }
         #endregion
         //-----------------------------------------------------------------
     }

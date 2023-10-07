@@ -14,5 +14,7 @@ namespace Dream.API.Repositories
         Task CreatePointOfInterestAsync(int cityId, PointOfInterest pointOfInterestId);
         Task<bool> SaveChangesAsync();
         Task UpdatePointOfInterestAsync(int cityId, int pointOfInterestId, PointOfInterest pointOfInterest);
+
+        void DeletePointOfInterest(PointOfInterest pointOfInterest);
     }
 }

@@ -78,5 +78,11 @@ namespace Dream.API.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public void DeletePointOfInterest(PointOfInterest pointOfInterest)
+        {
+            _context.PointOfInterests.Remove(pointOfInterest);
+        }
+
     }
 }
